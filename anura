@@ -11,6 +11,7 @@ cliHelp(){
     Commands:
         ping    System Ping
         version System Version
+        system  System Info
         help    Help
     "
     exit 1
@@ -18,8 +19,19 @@ cliHelp(){
 
 case $1 in 
     ping)
-        echo "SYSTEM PING TEST"
+        curl -u poisondart:cmVmdGtuOjAxOjE2ODc0NTYxNzk6eVQyS05CNExzeVZKMkZNc3FsN1VLWld6UGMz -XGET https://anura.jfrog.io/artifactory/api/system/ping
+        ;;
+    system)
+        curl -u poisondart:cmVmdGtuOjAxOjE2ODc0NTYxNzk6eVQyS05CNExzeVZKMkZNc3FsN1VLWld6UGMz -XGET https://anura.jfrog.io/artifactory/api/system
+        ;;
+    version)
+        curl -u poisondart:cmVmdGtuOjAxOjE2ODc0NTYxNzk6eVQyS05CNExzeVZKMkZNc3FsN1VLWld6UGMz -XGET https://anura.jfrog.io/artifactory/api/system/version
         ;;
     *)
         cliHelp
 esac
+
+exit 0
+
+curl -v -u poisondart:cmVmdGtuOjAxOjE2ODc0NTYxNzk6eVQyS05CNExzeVZKMkZNc3FsN1VLWld6UGMz -XGET https://anura.jfrog.io/artifactory
+
