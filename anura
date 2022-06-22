@@ -1,0 +1,25 @@
+#!/bin/bash -e
+
+cliName="anura"
+
+cliHelp(){
+    echo "
+    This is a CLI for interacting with the Jfrog project Anura
+    
+    Usage: $cliName [command]
+    
+    Commands:
+        ping    System Ping
+        version System Version
+        help    Help
+    "
+    exit 1
+}
+
+case $1 in 
+    ping)
+        echo "SYSTEM PING TEST"
+        ;;
+    *)
+        cliHelp
+esac
