@@ -3,14 +3,14 @@ Bash CLI for interacting with Jfrog project "Anura"
 
 Features
 Please implement at least five of the following APIs, with at least one example of each HTTP verb:
-● System Ping           -   complete
-● System Version        -   complete
-● Create User           -   incomplete
-● Delete User           -   incomplete
-● Get Storage Info      -   complete
-● Create Repository     -   incomplete
-● Update repository     -   incomplete
-● List repositories     -   complete
+System Ping           -   complete
+System Version        -   complete
+Create User           -   incomplete
+Delete User           -   incomplete
+Get Storage Info      -   complete
+Create Repository     -   incomplete
+Update repository     -   incomplete
+List repositories     -   complete
 
 Set up Instructions
   - clone the repo to your local machine
