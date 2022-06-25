@@ -1,0 +1,3 @@
+#!/bin/bash -e
+
+curl -H "Authorization: Bearer $1" https://anura.jfrog.io/artifactory/api/v1/system/readiness
