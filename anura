@@ -16,7 +16,7 @@ cliHelp(){
         ping        System Ping (/readiness endpoint)
         version     System Version 
         get         Returns info from the Anura project
-        createUser  Creates a new user
+        create      Creates the specified resource in the Anura project
         help        Help
     "
     exit 1
@@ -29,7 +29,6 @@ getHelp(){
     Usage: $cliName get [args]
     
     Args:
-        key         Generates and returns APIkey
         storage     Returns storage info
         repos       Lists repositories
         help        Help
@@ -37,16 +36,67 @@ getHelp(){
     exit 1
 }
 
+createHelp(){
+    echo "
+    This is a CLI for interacting with the Jfrog project Anura
+    
+    Usage: $cliName create [args]
+    
+    Args:
+        repo        Create new Repo
+        user        create user
+        help        Help
+    "
+    exit 1
+}
+
+deleteHelp(){
+    echo "
+    This is a CLI for interacting with the Jfrog project Anura
+    
+    Usage: $cliName delete [args]
+    
+    Args:
+        repo        Delete specified Repo
+        user        Delete specified user
+        help        Help
+    "
+    exit 1
+}
 
 case $1 in 
     ping)
         curl -H "Authorization: Bearer $authToken" https://anura.jfrog.io/artifactory/api/v1/system/readiness
         ;;
+    version)
+        curl -H "Authorization: Bearer $authToken" https://anura.jfrog.io/artifactory/api/system/version
+        ;;
+    create)
+        case $2 in
+            repo)
+                curl -H "Authorization: Bearer $authToken" -H 'Content-Type:Application/Json' -XPOST https://anura.jfrog.io/artifactory/api/repositories/TF -d '{"key":"TF","rclass": "LOCAL","packageType":"terraform"}'
+            ;;
+            user)
+                createHelp #curl -H "Authorization: Bearer $authToken" https://anura.jfrog.io/artifactory/api/v1/scim/v2/Users
+            ;;
+            *)
+                createHelp
+            esac
+        ;;
+    delete)
+        case $2 in
+            repo)
+                curl -H "Authorization: Bearer $authToken" -XDELETE https://anura.jfrog.io/artifactory/api/repositories/TF
+            ;;
+            user)
+                #curl -H "Authorization: Bearer $authToken" -XDELETE https://anura.jfrog.io/artifactory/api/v1/scim/v2/Users
+            ;;
+            *)
+                deleteHelp
+            esac
+        ;;
     get)
         case $2 in
-            key)
-                curl -u 'poisondart:Dendrobatidae!1' https://anura.jfrog.io/artifactory/api/security/apiKey
-            ;;
             storage)
                 curl -H "Authorization: Bearer $authToken" https://anura.jfrog.io/artifactory/api/storageinfo
             ;;
@@ -57,17 +107,6 @@ case $1 in
                 getHelp
             esac
         ;;
-    version)
-        curl -H "Authorization: Bearer $authToken" https://anura.jfrog.io/artifactory/api/system/version
-        ;;
-    createUser)
-        curl -v -u 'poisondart:Dendrobatidae!1' -H 'Content-Type:Aplication/scim+json' -XGET https://anura.jfrog.io/artifactory/api/v1/scim/v2/Users
-        ;;
     *)
         cliHelp
 esac
-
-exit 0
-
-curl -v -u poisondart:cmVmdGtuOjAxOjE2ODc0NTYxNzk6eVQyS05CNExzeVZKMkZNc3FsN1VLWld6UGMz -XGET https://anura.jfrog.io/artifactory
-
