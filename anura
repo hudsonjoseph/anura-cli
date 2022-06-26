@@ -1,10 +1,6 @@
 #!/bin/bash -e
 
 cliName=${0##*/}
-authToken="cmVmdGtuOjAxOjE2ODc0NTYxNzk6eVQyS05CNExzeVZKMkZNc3FsN1VLWld6UGMz"
-
-
-
 
 cliHelp(){
     echo "
@@ -13,10 +9,12 @@ cliHelp(){
     Usage: $cliName [command]
     
     Commands:
-        ping        System Ping (/readiness endpoint)
-        version     System Version 
+        connect     ** must include 'source' (source anura connect)** Authenticates the current session to the Anura project
+        ping        System ping (/readiness endpoint)
+        version     Returns system version info
         get         Returns info from the Anura project
         create      Creates the specified resource in the Anura project
+        delete      Deletes the specified resource from the Anura project
         help        Help
     "
     exit 1
@@ -65,19 +63,31 @@ deleteHelp(){
 }
 
 case $1 in 
+    connect)
+        read -p "Username: " username
+        read -p "Password: " password
+        curl -s -u "$username:$password" -XPOST https://anura.jfrog.io/artifactory/api/security/apiKey &> /dev/null
+        keyJson=$(curl -s -u "$username:$password" https://anura.jfrog.io/artifactory/api/security/apiKey) 
+        keyJson=${keyJson##*":"}
+        keyJson=${keyJson//"}"/}
+        apiKey=${keyJson//\"/}
+        echo "key: $apiKey"
+        keyJson=""
+        curl -H "X-JFrog-Art-API:$apiKey" https://anura.jfrog.io/artifactory/api/v1/system/readiness
+        ;;
     ping)
-        curl -H "Authorization: Bearer $authToken" https://anura.jfrog.io/artifactory/api/v1/system/readiness
+        curl -H "X-JFrog-Art-API:$apiKey" https://anura.jfrog.io/artifactory/api/v1/system/readiness
         ;;
     version)
-        curl -H "Authorization: Bearer $authToken" https://anura.jfrog.io/artifactory/api/system/version
+        curl -H "X-JFrog-Art-API:$apiKey" https://anura.jfrog.io/artifactory/api/system/version
         ;;
     create)
         case $2 in
             repo)
-                curl -H "Authorization: Bearer $authToken" -H 'Content-Type:Application/Json' -XPOST https://anura.jfrog.io/artifactory/api/repositories/TF -d '{"key":"TF","rclass": "LOCAL","packageType":"terraform"}'
+                curl -H "X-JFrog-Art-API:$apiKey" -H 'Content-Type:Application/Json' -XPOST https://anura.jfrog.io/artifactory/api/repositories/TF -d '{"key":"TF","rclass": "LOCAL","packageType":"terraform"}'
             ;;
             user)
-                createHelp #curl -H "Authorization: Bearer $authToken" https://anura.jfrog.io/artifactory/api/v1/scim/v2/Users
+                createHelp #curl -H "X-JFrog-Art-API:$apiKey" https://anura.jfrog.io/artifactory/api/v1/scim/v2/Users
             ;;
             *)
                 createHelp
@@ -86,10 +96,10 @@ case $1 in
     delete)
         case $2 in
             repo)
-                curl -H "Authorization: Bearer $authToken" -XDELETE https://anura.jfrog.io/artifactory/api/repositories/TF
+                curl -H "X-JFrog-Art-API:$apiKey" -XDELETE https://anura.jfrog.io/artifactory/api/repositories/TF
             ;;
             user)
-                #curl -H "Authorization: Bearer $authToken" -XDELETE https://anura.jfrog.io/artifactory/api/v1/scim/v2/Users
+                deleteHelp #curl -H "X-JFrog-Art-API:$apiKey" -XDELETE https://anura.jfrog.io/artifactory/api/v1/scim/v2/Users
             ;;
             *)
                 deleteHelp
@@ -98,10 +108,10 @@ case $1 in
     get)
         case $2 in
             storage)
-                curl -H "Authorization: Bearer $authToken" https://anura.jfrog.io/artifactory/api/storageinfo
+                curl -H "X-JFrog-Art-API:$apiKey" https://anura.jfrog.io/artifactory/api/storageinfo
             ;;
             repos)
-                curl -H "Authorization: Bearer $authToken" https://anura.jfrog.io/artifactory/api/repositories
+                curl -H "X-JFrog-Art-API:$apiKey" https://anura.jfrog.io/artifactory/api/repositories
             ;;
             *)
                 getHelp
