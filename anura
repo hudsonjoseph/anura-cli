@@ -72,7 +72,7 @@ case $1 in
         keyJson=${keyJson%%","*}
         keyJson=${keyJson##*":"}
         keyJson=${keyJson//"}"/}
-        apiKey=${keyJson//\"/} #set 'apiKey' to be used in following calls to the anura project
+        export apiKey=${keyJson//\"/} #set 'apiKey' to be used in following calls to the anura project
         echo ""
         echo "Testing connection..."
         curl -H "X-JFrog-Art-API:$apiKey" https://anura.jfrog.io/artifactory/api/v1/system/readiness # Test the set 'apiKey'
