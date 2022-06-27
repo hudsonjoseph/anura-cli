@@ -68,10 +68,10 @@ case $1 in
         read -p "Password: " password
         curl -s -u "$username:$password" -XPOST https://anura.jfrog.io/artifactory/api/security/apiKey &> /dev/null
         keyJson=$(curl -s -u "$username:$password" https://anura.jfrog.io/artifactory/api/security/apiKey) 
+        keyJson=${keyJson%%","*}
         keyJson=${keyJson##*":"}
         keyJson=${keyJson//"}"/}
         apiKey=${keyJson//\"/}
-        echo "key: $apiKey"
         keyJson=""
         curl -H "X-JFrog-Art-API:$apiKey" https://anura.jfrog.io/artifactory/api/v1/system/readiness
         ;;
