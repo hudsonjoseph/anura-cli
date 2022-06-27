@@ -68,6 +68,7 @@ case $1 in
         read -p "Password: " -s password
         curl -s -u "$username:$password" -XPOST https://anura.jfrog.io/artifactory/api/security/apiKey &> /dev/null # If the apikey does not exist, first create it.
         keyJson=$(curl -s -u "$username:$password" https://anura.jfrog.io/artifactory/api/security/apiKey) 
+        password="" # Clear password variable
         keyJson=${keyJson%%","*}
         keyJson=${keyJson##*":"}
         keyJson=${keyJson//"}"/}
@@ -97,7 +98,7 @@ case $1 in
     delete)
         case $2 in
             repo)
-                curl -H "X-JFrog-Art-API:$apiKey" -XDELETE https://anura.jfrog.io/artifactory/api/repositories/TF
+                curl -H "X-JFrog-Art-API:$apiKey" -XDELETE https://anura.jfrog.io/artifactory/api/repositories/$3
             ;;
             user)
                 deleteHelp #curl -H "X-JFrog-Art-API:$apiKey" -XDELETE https://anura.jfrog.io/artifactory/api/v1/scim/v2/Users
