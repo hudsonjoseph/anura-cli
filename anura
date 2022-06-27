@@ -2,7 +2,7 @@
 
 cliName=${0##*/}
 
-cliHelp(){
+cliHelp(){ # help text to be printed when 'anura' is run with unrecognized arguments
     echo "
     This is a CLI for interacting with the Jfrog project Anura
     
@@ -20,7 +20,7 @@ cliHelp(){
     exit 1
 }
 
-getHelp(){
+getHelp(){ # help text to be printed when 'anura' is run with the 'get' verb and unrecognized arguments
     echo "
     This is a CLI for interacting with the Jfrog project Anura
     
@@ -34,7 +34,7 @@ getHelp(){
     exit 1
 }
 
-createHelp(){
+createHelp(){ # help text to be printed when 'anura' is run with the 'create' verb and unrecognized arguments
     echo "
     This is a CLI for interacting with the Jfrog project Anura
     
@@ -48,7 +48,7 @@ createHelp(){
     exit 1
 }
 
-deleteHelp(){
+deleteHelp(){ # help text to be printed when 'anura' is run with the 'delete' verb and unrecognized arguments
     echo "
     This is a CLI for interacting with the Jfrog project Anura
     
@@ -65,15 +65,16 @@ deleteHelp(){
 case $1 in 
     connect)
         read -p "Username: " username
-        read -p "Password: " password
-        curl -s -u "$username:$password" -XPOST https://anura.jfrog.io/artifactory/api/security/apiKey &> /dev/null
+        read -p "Password: " -s password
+        curl -s -u "$username:$password" -XPOST https://anura.jfrog.io/artifactory/api/security/apiKey &> /dev/null # If the apikey does not exist, first create it.
         keyJson=$(curl -s -u "$username:$password" https://anura.jfrog.io/artifactory/api/security/apiKey) 
         keyJson=${keyJson%%","*}
         keyJson=${keyJson##*":"}
         keyJson=${keyJson//"}"/}
-        apiKey=${keyJson//\"/}
-        keyJson=""
-        curl -H "X-JFrog-Art-API:$apiKey" https://anura.jfrog.io/artifactory/api/v1/system/readiness
+        apiKey=${keyJson//\"/} #set 'apiKey' to be used in following calls to the anura project
+        echo ""
+        echo "Testing connection..."
+        curl -H "X-JFrog-Art-API:$apiKey" https://anura.jfrog.io/artifactory/api/v1/system/readiness # Test the set 'apiKey'
         ;;
     ping)
         curl -H "X-JFrog-Art-API:$apiKey" https://anura.jfrog.io/artifactory/api/v1/system/readiness

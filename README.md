@@ -15,7 +15,7 @@ Please implement at least five of the following APIs, with at least one example 
 Set up Instructions
   - clone the repo to your local machine
   - export the path to the repo on your local machine
-  - run 'anura help' to get started
+  - run 'source anura connect' to get started
 
 Notes
   - Need to finish the create, get, and delete commmands to allow user input to specifiy the specific resource to be targetted
